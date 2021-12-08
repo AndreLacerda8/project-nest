@@ -1,11 +1,13 @@
 import { CreateUserInput } from './create-user.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, PartialType } from '@nestjs/graphql';
+import { IsEmail } from 'class-validator'
 
 @InputType()
 export class UpdateUserInput extends PartialType(CreateUserInput) {
-  @Field(() => String)
   name?: string;
 
-  @Field(() => String)
+  @IsEmail()
   email?: string;
+
+  password?: string
 }

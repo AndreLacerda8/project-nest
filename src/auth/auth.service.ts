@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt'
 import { User } from 'src/users/entities/user.entity';
+import { AuthInput } from './dto/auth.input';
+import { AuthType } from './dto/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -11,22 +13,26 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(email);
-    const correctPassword = await compare(pass, user.password)
-    if (user && correctPassword) {
-      const { name, email, id } = user;
-      return {
-        id, name, email
-      };
+  async validateUser(data: AuthInput): Promise<AuthType> {
+    const user = await this.usersService.findByEmail(data.email);
+    if(!user){
+      throw new NotFoundException("User Not Found")
     }
-    return null;
+    const correctPassword = await compare(data.password, user.password)
+    if (!correctPassword){
+      throw new NotFoundException("User Not Found")
+    }
+
+    const token = await this.jwtToken(user)
+
+    return {
+      user,
+      token
+    }
   }
 
-  async login(user: User){
+  async jwtToken(user: User){
     const payload = { email: user.email, sub: user.id }
-    return {
-        access_token: this.jwtService.sign(payload)
-    }
+    return this.jwtService.signAsync(payload)
   }
 }

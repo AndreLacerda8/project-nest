@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, HideField } from '@nestjs/graphql';
 import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid'
 
@@ -17,7 +17,7 @@ export class User {
   @Column()
   email: string;
 
-  @Field(() => String)
+  @HideField()
   @Column()
   password: string;
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
@@ -14,27 +14,54 @@ export class UsersService {
     private usersRepository: Repository<User>
   ){}
 
-  async create(createUserInput: CreateUserInput) {
-    const password = await hash(createUserInput.password, 10)
-    createUserInput.password = password
-    const user = this.usersRepository.create(createUserInput);
+  async create(data: CreateUserInput) {
+    const alreadyExists = await this.usersRepository.findOne({ where: {email: data.email} })
+    if(alreadyExists){
+      throw new BadRequestException('Email already exists')
+    }
+    const password = await hash(data.password, 10)
+    const user = this.usersRepository.create({
+      name: data.name,
+      email: data.email,
+      password
+    });
     await this.usersRepository.save(user)
     return user
   }
 
-  async findOne(id: string) {
-    const user = await this.usersRepository.findOne(id);
+  async findByEmail(email: string) {
+    const user = await this.usersRepository.findOne({
+      where: {email}
+    });
+    if(!user){
+      throw new NotFoundException('User Not Found')
+    }
+    return user
+  }
+
+  async getUserById(id: string){
+    const user = await this.usersRepository.findOne(id)
+    if(!user){
+      throw new NotFoundException('User Not Found')
+    }
     return user
   }
 
   async update(id: string, data: UpdateUserInput) {
     const user = await this.usersRepository.findOne(id)
+    if(!user){
+      throw new NotFoundException('User Not Found')
+    }
     await this.usersRepository.update(id, {...data})
     const userUpdated = this.usersRepository.create({...user, ...data})
     return userUpdated
   }
 
   async remove(id: string) {
+    const user = await this.usersRepository.findOne(id)
+    if(!user){
+      throw new NotFoundException('User Not Found')
+    }
     const deleted = await this.usersRepository.delete(id)
     if(deleted){
       return true
