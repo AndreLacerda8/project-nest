@@ -6,5 +6,9 @@
     "password": "password",
     "database": "prova_nest",
     "entities": ["dist/**/*.entity{.ts,.js}"],
+    "migrations": ["dist/db/migrations/*.ts"],
+    "cli": {
+        "migrationsDir": "./src/db/migrations"
+    },
     "synchronize": true
 }

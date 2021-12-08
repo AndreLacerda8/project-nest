@@ -3,21 +3,21 @@
 # ------------------------------------------------------
 
 type User {
-  id: Int!
+  id: String!
   name: String!
   email: String!
   password: String!
 }
 
 type Query {
-  users: [User!]!
-  user(id: Int!): User!
+  user(id: String!): User!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
-  updateUser(data: UpdateUserInput!, id: Float!): User!
-  removeUser(id: Int!): Boolean!
+  login(password: String!, email: String!): User!
+  updateUser(data: UpdateUserInput!, id: String!): User!
+  removeUser(id: String!): Boolean!
 }
 
 input CreateUserInput {
