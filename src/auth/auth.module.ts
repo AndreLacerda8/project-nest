@@ -6,10 +6,12 @@ import { AuthResolver } from './auth.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
+import { Bet } from 'src/bets/entities/bet.entity';
+import { UsersPermission } from 'src/users-permissions/entities/userspermission.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Bet, UsersPermission]),
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.SECRET_KEY_JWT,
@@ -20,6 +22,5 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   providers: [AuthService, UsersService, AuthResolver, JwtStrategy],
-  // exports: [AuthService, UsersService]
 })
 export class AuthModule {}

@@ -6,12 +6,18 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 
 import { hash } from 'bcrypt'
+import { Bet } from 'src/bets/entities/bet.entity';
+import { UsersPermission } from 'src/users-permissions/entities/userspermission.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
+    @InjectRepository(Bet)
+    private betsRepository: Repository<Bet>,
+    @InjectRepository(UsersPermission)
+    private usersPermissionRepository: Repository<UsersPermission>
   ){}
 
   async create(data: CreateUserInput) {
@@ -31,11 +37,16 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const user = await this.usersRepository.findOne({
-      where: {email}
-    });
+      where: {email},
+    },)
     if(!user){
       throw new NotFoundException('User Not Found')
     }
+    const bets = await this.betsRepository.find({
+      where: {user_id: user.id}
+    })
+    user.bets = bets
+    console.log(user)
     return user
   }
 
@@ -44,6 +55,16 @@ export class UsersService {
     if(!user){
       throw new NotFoundException('User Not Found')
     }
+    const bets = await this.betsRepository.find({
+      where: {user_id: user.id},
+      relations: ['game']
+    })
+    user.bets = bets
+    const userPermissions = await this.usersPermissionRepository.find({
+      where: {user_id: id},
+      relations: ['permission']
+    })
+    user.userPermission = userPermissions
     return user
   }
 
@@ -63,7 +84,7 @@ export class UsersService {
       throw new NotFoundException('User Not Found')
     }
     const deleted = await this.usersRepository.delete(id)
-    if(deleted){
+    if(deleted.affected !== 0){
       return true
     }
     return false

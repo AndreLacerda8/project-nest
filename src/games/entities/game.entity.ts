@@ -23,7 +23,7 @@ export class Game {
     range: number
 
     @Field(() => Number)
-    @Column()
+    @Column({ type: 'float' })
     price: number
 
     @Field(() => Number)

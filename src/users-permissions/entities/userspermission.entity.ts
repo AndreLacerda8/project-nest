@@ -1,11 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Game } from 'src/games/entities/game.entity';
+import { Permission } from 'src/permissions/entities/permission.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 
 @ObjectType()
-@Entity('bets')
-export class Bet {
+@Entity('users_permissions')
+export class UsersPermission {
     @Field(() => Number)
     @PrimaryColumn()
     @Generated('increment')
@@ -17,11 +17,7 @@ export class Bet {
 
     @Field(() => Number)
     @Column()
-    game_id: number
-
-    @Field(() => String)
-    @Column()
-    numbers: string
+    permission_id: number
 
     @CreateDateColumn()
     created_at: Date
@@ -30,12 +26,12 @@ export class Bet {
     updated_at: Date
 
     @Field(() => User)
-    @ManyToOne(type => User, user => user.bets)
+    @ManyToOne(type => User, user => user.userPermission)
     @JoinColumn({ name: 'user_id' })
     user: User
 
-    @Field(() => Game)
-    @ManyToOne(type => Game, game => game.bets)
-    @JoinColumn({ name: 'game_id' })
-    game: Game
+    @Field(() => Permission)
+    @ManyToOne(type => Permission, permission => permission.userPermission)
+    @JoinColumn({ name: 'permission_id' })
+    permission: Permission
 }

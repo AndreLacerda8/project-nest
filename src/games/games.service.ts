@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGameInput } from './dto/create-game.input';
+import { UpdateGameInput } from './dto/update-game.input';
 import { Game } from './entities/game.entity';
 
 @Injectable()
@@ -48,14 +49,14 @@ export class GamesService {
         }
     }
 
-    async update(id: number, data: CreateGameInput){
+    async update(id: number, data: UpdateGameInput){
         try {
             const game = await this.gamesRepository.findOne(id)
             if(!game){
                 throw new NotFoundException('Game not Found')
             }
             await this.gamesRepository.update(id, {...data})
-            const gameUpdated = this.gamesRepository.create({...data})
+            const gameUpdated = this.gamesRepository.create({...game, ...data})
             return gameUpdated
         } catch (err) {
             throw new InternalServerErrorException(err)
@@ -69,8 +70,8 @@ export class GamesService {
             if(!game){
                 throw new NotFoundException('Game Not Found')
             }
-            const deletedGame = this.gamesRepository.delete(id)
-            if(deletedGame){
+            const deletedGame = await this.gamesRepository.delete(id)
+            if(deletedGame.affected !== 0){
                 return true
             }
             return false

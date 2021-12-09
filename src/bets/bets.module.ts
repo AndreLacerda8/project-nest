@@ -8,6 +8,7 @@ import { Bet } from './entities/bet.entity';
   imports: [
     TypeOrmModule.forFeature([Bet]),
   ],
-  providers: [BetsResolver, BetsService]
+  providers: [BetsResolver, BetsService],
+  exports: [TypeOrmModule]
 })
 export class BetsModule {}

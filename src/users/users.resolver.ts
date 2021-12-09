@@ -28,7 +28,7 @@ export class UsersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
-  findByEmail(@Args('id', { type: () => String }) id: string) {
+  findById(@Args('id', { type: () => String }) id: string) {
     return this.usersService.getUserById(id);
   }
   

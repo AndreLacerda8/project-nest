@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateGameInput } from './dto/create-game.input';
+import { UpdateGameInput } from './dto/update-game.input';
 import { Game } from './entities/game.entity';
 import { GamesService } from './games.service';
 
@@ -33,7 +34,7 @@ export class GamesResolver {
     @Mutation(() => Game)
     updateGame(
         @Args('id') id: number,
-        @Args('game') game: CreateGameInput
+        @Args('game') game: UpdateGameInput
     ){
         return this.gamesService.update(id, game)
     }
