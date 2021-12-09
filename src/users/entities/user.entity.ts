@@ -1,5 +1,6 @@
 import { ObjectType, Field, HideField } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Bet } from 'src/bets/entities/bet.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid'
 
 @ObjectType()
@@ -26,6 +27,10 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date
+
+  @Field(() => [Bet])
+  @OneToMany(type => Bet, bet => bet)
+  bets: Bet[]
 
   constructor(){
     if(!this.id){

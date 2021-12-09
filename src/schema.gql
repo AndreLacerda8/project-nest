@@ -2,10 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Game {
+  id: Float!
+  type: String!
+  description: String!
+  range: Float!
+  price: Float!
+  max_number: Float!
+  color: String!
+  bets: [Bet!]!
+}
+
+type Bet {
+  id: Float!
+  user_id: String!
+  game_id: Float!
+  numbers: String!
+  bets: User!
+}
+
 type User {
   id: String!
   name: String!
   email: String!
+  bets: [Bet!]!
 }
 
 type AuthType {
@@ -15,6 +35,8 @@ type AuthType {
 
 type Query {
   user(id: String!): User!
+  games: [Game!]!
+  game(id: Float!): Game!
 }
 
 type Mutation {
@@ -22,6 +44,10 @@ type Mutation {
   updateUser(data: UpdateUserInput!, id: String!): User!
   removeUser(id: String!): Boolean!
   login(data: AuthInput!): AuthType!
+  createGame(game: CreateGameInput!): Game!
+  updateGame(game: CreateGameInput!, id: Float!): Game!
+  deleteGame(id: Float!): Boolean!
+  createBet(bet: CreateBetInput!): Bet!
 }
 
 input CreateUserInput {
@@ -39,4 +65,19 @@ input UpdateUserInput {
 input AuthInput {
   email: String!
   password: String!
+}
+
+input CreateGameInput {
+  type: String!
+  description: String!
+  range: Float!
+  price: Float!
+  max_number: Float!
+  color: String!
+}
+
+input CreateBetInput {
+  user_id: String!
+  game_id: Float!
+  numbers: String!
 }

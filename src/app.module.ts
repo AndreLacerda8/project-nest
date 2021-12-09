@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { GamesModule } from './games/games.module';
+import { BetsModule } from './bets/bets.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { AuthModule } from './auth/auth.module';
       context: ({ req }) => ({ req })
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    GamesModule,
+    BetsModule
   ],
   controllers: [AppController],
   providers: [AppService],
