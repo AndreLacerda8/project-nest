@@ -22,7 +22,7 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule.forRoot(),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      context: ({ req }) => ({ req })
+      context: ({ req }) => ({ ...req })
     }),
     JwtModule.registerAsync({
       useFactory: () => ({

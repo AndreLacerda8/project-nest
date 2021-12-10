@@ -3,11 +3,6 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 
 @InputType()
 export class CreateBetInput {
-  @IsNotEmpty()
-  @IsString()
-  @Field()
-  user_id: string
-
   @IsNumber()
   @IsNotEmpty()
   @Field()

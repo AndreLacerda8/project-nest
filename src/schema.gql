@@ -55,24 +55,24 @@ type AllGamesType {
 }
 
 type Query {
-  user(userId: String!): User!
+  user: User!
   games: AllGamesType!
   game(id: Float!): Game!
-  bets(userId: String!): [Bet!]!
+  bets: [Bet!]!
   bet(betId: Float!): Bet!
 }
 
 type Mutation {
   createUser(data: CreateUserInput!): AuthType!
-  updateUser(data: UpdateUserInput!, userId: String!): User!
-  removeUser(userId: String!): Boolean!
+  updateUser(data: UpdateUserInput!): User!
+  removeUser: Boolean!
   login(data: AuthInput!): AuthType!
   createGame(game: CreateGameInput!): Game!
   updateGame(game: UpdateGameInput!, id: Float!): Game!
   deleteGame(id: Float!): Boolean!
   createBet(bets: [CreateBetInput!]!): [Bet!]!
-  updateBet(bet: UpdateBetInput!, userId: String!, betId: Float!): Bet!
-  deleteBet(userId: String!, betId: Float!): Boolean!
+  updateBet(bet: UpdateBetInput!, betId: Float!): Bet!
+  deleteBet(betId: Float!): Boolean!
   createAdmin(id: String!): String!
 }
 
@@ -112,7 +112,6 @@ input UpdateGameInput {
 }
 
 input CreateBetInput {
-  user_id: String!
   game_id: Float!
   numbers: String!
 }

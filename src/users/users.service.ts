@@ -32,6 +32,11 @@ export class UsersService {
       password
     });
     await this.usersRepository.save(user)
+    const usersPermission = this.usersPermissionRepository.create({
+      permission_id: 2,
+      user_id: user.id
+    })
+    await this.usersPermissionRepository.save(usersPermission)
     return user
   }
 
@@ -55,39 +60,47 @@ export class UsersService {
   }
 
   async getUserById(id: string){
-    const user = await this.usersRepository.findOne(id)
-    if(!user){
+    const currentUser = await this.usersRepository.findOne(id)
+    if(!currentUser){
       throw new NotFoundException('User Not Found')
     }
     const bets = await this.betsRepository.find({
-      where: {user_id: user.id},
+      where: {user_id: currentUser.id},
       relations: ['game']
     })
-    user.bets = bets
+    currentUser.bets = bets
     const userPermissions = await this.usersPermissionRepository.find({
-      where: {user_id: id},
+      where: {user_id: currentUser.id},
       relations: ['permission']
     })
-    user.userPermission = userPermissions
-    return user
+    currentUser.userPermission = userPermissions
+    return currentUser
   }
 
-  async update(id: string, data: UpdateUserInput) {
-    const user = await this.usersRepository.findOne(id)
-    if(!user){
+  async update(user: User, data: UpdateUserInput) {
+    const currentUser = await this.usersRepository.findOne(user.id)
+    if(!currentUser){
       throw new NotFoundException('User Not Found')
     }
-    await this.usersRepository.update(id, {...data})
+    await this.usersRepository.update(currentUser.id, {...data})
     const userUpdated = this.usersRepository.create({...user, ...data})
     return userUpdated
   }
 
-  async remove(id: string) {
-    const user = await this.usersRepository.findOne(id)
+  async remove(user: User) {
+    const currentUser = await this.usersRepository.findOne(user.id)
     if(!user){
       throw new NotFoundException('User Not Found')
     }
-    const deleted = await this.usersRepository.delete(id)
+    const bets = await this.betsRepository.find({ where: { user_id: user.id } })
+    for(let bet of bets){
+      await this.betsRepository.delete(bet.id)
+    }
+    const permissions = await this.usersPermissionRepository.find({ where: { user_id: user.id } })
+    for(let permission of permissions){
+      await this.usersPermissionRepository.delete(permission.id)
+    }
+    const deleted = await this.usersRepository.delete(currentUser.id)
     if(deleted.affected !== 0){
       return true
     }

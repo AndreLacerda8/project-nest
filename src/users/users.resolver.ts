@@ -7,6 +7,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { AuthType } from '../auth/dto/auth.type';
+import { CurrentUser } from 'src/auth/currentUser.decorator';
 
 
 @Resolver(() => User)
@@ -28,22 +29,22 @@ export class UsersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
-  findById(@Args('userId', { type: () => String }) id: string)  {
-    return this.usersService.getUserById(id);
+  getUserById(@CurrentUser() user: User)  {
+    return user;
   }
   
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   updateUser(
-    @Args('userId') id: string,
+    @CurrentUser() user: User,
     @Args('data') data: UpdateUserInput
   ) {
-    return this.usersService.update(id, data);
+    return this.usersService.update(user, data);
   }
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
-  removeUser(@Args('userId', { type: () => String }) id: string) {
-    return this.usersService.remove(id);
+  removeUser(@CurrentUser() user: User) {
+    return this.usersService.remove(user);
   }
 }
