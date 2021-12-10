@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Game } from 'src/games/entities/game.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Game } from '../../games/entities/game.entity';
+import { User } from '../../users/entities/user.entity';
 import { Column, CreateDateColumn, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 
 @ObjectType()

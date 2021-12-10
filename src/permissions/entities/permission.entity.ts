@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { UsersPermission } from 'src/users-permissions/entities/userspermission.entity';
+import { UsersPermission } from '../../users-permissions/entities/userspermission.entity';
 import { Column, CreateDateColumn, Entity, Generated, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 
 @ObjectType()

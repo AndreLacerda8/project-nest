@@ -6,8 +6,8 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 
 import { hash } from 'bcrypt'
-import { Bet } from 'src/bets/entities/bet.entity';
-import { UsersPermission } from 'src/users-permissions/entities/userspermission.entity';
+import { Bet } from '../bets/entities/bet.entity';
+import { UsersPermission } from '../users-permissions/entities/userspermission.entity';
 
 @Injectable()
 export class UsersService {

@@ -1,8 +1,7 @@
 import { ObjectType, Field, HideField } from '@nestjs/graphql';
-import { Bet } from 'src/bets/entities/bet.entity';
-import { Permission } from 'src/permissions/entities/permission.entity';
-import { UsersPermission } from 'src/users-permissions/entities/userspermission.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Bet } from '../../bets/entities/bet.entity';
+import { UsersPermission } from '../../users-permissions/entities/userspermission.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { v4 as uuid } from 'uuid'
 
 @ObjectType()

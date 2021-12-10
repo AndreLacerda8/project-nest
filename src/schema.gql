@@ -22,18 +22,18 @@ type Bet {
   game: Game!
 }
 
+type Permission {
+  id: Float!
+  name: String!
+  userPermission: [UsersPermission!]!
+}
+
 type UsersPermission {
   id: Float!
   user_id: String!
   permission_id: Float!
   user: User!
   permission: Permission!
-}
-
-type Permission {
-  id: Float!
-  name: String!
-  userPermission: [UsersPermission!]!
 }
 
 type User {
