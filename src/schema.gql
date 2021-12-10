@@ -70,9 +70,10 @@ type Mutation {
   createGame(game: CreateGameInput!): Game!
   updateGame(game: UpdateGameInput!, id: Float!): Game!
   deleteGame(id: Float!): Boolean!
-  createBet(bet: CreateBetInput!): Bet!
-  updateBet(bet: UpdateBetInput!, betId: Float!): Bet!
-  deleteBet(betId: Float!): Boolean!
+  createBet(bets: [CreateBetInput!]!): [Bet!]!
+  updateBet(bet: UpdateBetInput!, userId: String!, betId: Float!): Bet!
+  deleteBet(userId: String!, betId: Float!): Boolean!
+  createAdmin(id: String!): String!
 }
 
 input CreateUserInput {

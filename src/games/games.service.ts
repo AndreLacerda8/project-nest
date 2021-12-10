@@ -76,7 +76,6 @@ export class GamesService {
     async delete(id: number){
         try{
             const game = await this.gamesRepository.findOne(id)
-            console.log(game)
             if(!game){
                 throw new NotFoundException('Game Not Found')
             }

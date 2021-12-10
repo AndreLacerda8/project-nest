@@ -1,5 +1,7 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { Game } from 'src/games/entities/game.entity';
 import { Repository } from 'typeorm';
 import { CreateBetInput } from './dto/create-bet.input';
 import { UpdateBetInput } from './dto/update-bet.input';
@@ -9,7 +11,11 @@ import { Bet } from './entities/bet.entity';
 export class BetsService {
     constructor(
         @InjectRepository(Bet)
-        private betsRepository: Repository<Bet>
+        private betsRepository: Repository<Bet>,
+        @InjectRepository(Game)
+        private gamesRepository: Repository<Game>,
+        @InjectRepository(Cart)
+        private cartsRepository: Repository<Cart>
     ){}
 
     async getBetsOfUser(userId: string){
@@ -39,20 +45,36 @@ export class BetsService {
         }
     }
 
-    async create(bet: CreateBetInput){
+    async create(bets: CreateBetInput[]){
         try{
-            const newBet =  this.betsRepository.create(bet)
-            await this.betsRepository.save(newBet)
-            return newBet
+            const allGames = await this.gamesRepository.find()
+            const prices = allGames.map(game => {
+                return { id: game.id, price: game.price }
+            })
+            const totalPrice = bets.reduce((acc, crr) => {
+                const currentPrice = prices.filter(price => {
+                    return price.id === +crr.game_id
+                })[0].price
+                return acc + (+currentPrice)
+            }, 0)
+            const minCartValue = await this.cartsRepository.findOne({
+                where: { config: 'min-cart-value' }
+            })
+            if(totalPrice < +minCartValue.value){
+                throw new BadRequestException('The Minimun value of the cart must be ' + minCartValue.value + ',00')
+            }
+            const newBets = this.betsRepository.create(bets)
+            await this.betsRepository.save(newBets)
+            return newBets
         } catch(err){
             throw new InternalServerErrorException(err)
         }
     }
 
-    async update(betId: number, data: UpdateBetInput){
+    async update(betId: number, userId: string, data: UpdateBetInput){
         try{
             const bet = await this.betsRepository.findOne(betId)
-            if(!bet){
+            if(!bet || bet.user_id !== userId){
                 throw new NotFoundException('Bet not Found')
             }
             await this.betsRepository.update(betId, {...data})
@@ -63,10 +85,10 @@ export class BetsService {
         }
     }
 
-    async delete(betId: number){
+    async delete(betId: number, userId: string){
         try{
             const bet = await this.betsRepository.findOne(betId)
-            if(!bet){
+            if(!bet || bet.user_id !== userId){
                 throw new NotFoundException('Bet not Found')
             }
             const deletedBet = await this.betsRepository.delete(betId)

@@ -25,23 +25,27 @@ export class BetsResolver {
     }
 
     @UseGuards(GqlAuthGuard)
-    @Mutation(() => Bet)
-    createBet(@Args('bet') bet: CreateBetInput){
-        return this.betsService.create(bet)
+    @Mutation(() => [Bet])
+    createBet(@Args('bets', { type: () => [CreateBetInput] }) bets: CreateBetInput[]){
+        return this.betsService.create(bets)
     }
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => Bet)
     updateBet(
         @Args('betId') betId: number,
+        @Args('userId') userId: string,
         @Args('bet') bet: UpdateBetInput
     ){
-        return this.betsService.update(betId, bet)
+        return this.betsService.update(betId, userId, bet)
     }
 
     @UseGuards(GqlAuthGuard)
     @Mutation(() => Boolean)
-    deleteBet(@Args('betId') betId: number){
-        return this.betsService.delete(betId)
+    deleteBet(
+        @Args('betId') betId: number,
+        @Args('userId') userId: string
+    ){
+        return this.betsService.delete(betId, userId)
     }
 }
