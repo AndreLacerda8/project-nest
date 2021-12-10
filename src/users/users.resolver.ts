@@ -28,14 +28,14 @@ export class UsersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
-  findById(@Args('id', { type: () => String }) id: string) {
+  findById(@Args('userId', { type: () => String }) id: string)  {
     return this.usersService.getUserById(id);
   }
   
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   updateUser(
-    @Args('id') id: string,
+    @Args('userId') id: string,
     @Args('data') data: UpdateUserInput
   ) {
     return this.usersService.update(id, data);
@@ -43,7 +43,7 @@ export class UsersResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean)
-  removeUser(@Args('id', { type: () => String }) id: string) {
+  removeUser(@Args('userId', { type: () => String }) id: string) {
     return this.usersService.remove(id);
   }
 }

@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cart } from 'src/cart/entities/cart.entity';
 import { Repository } from 'typeorm';
+import { AllGamesType } from './dto/allgames.type';
 import { CreateGameInput } from './dto/create-game.input';
 import { UpdateGameInput } from './dto/update-game.input';
 import { Game } from './entities/game.entity';
@@ -9,13 +11,21 @@ import { Game } from './entities/game.entity';
 export class GamesService {
     constructor(
         @InjectRepository(Game)
-        private gamesRepository: Repository<Game>
+        private gamesRepository: Repository<Game>,
+        @InjectRepository(Cart)
+        private cartRepository: Repository<Cart>
     ){}
 
-    async getAllGames(){
+    async getAllGames(): Promise<AllGamesType> {
         try{
             const allGames = await this.gamesRepository.find()
-            return allGames
+            const cart = await this.cartRepository.findOne({
+                where: { config: 'min-cart-value' }
+            })
+            return {
+                minCartValue: +cart.value,
+                allGames
+            }
         } catch(err){
             throw new InternalServerErrorException(err)
         }

@@ -46,7 +46,11 @@ export class UsersService {
       where: {user_id: user.id}
     })
     user.bets = bets
-    console.log(user)
+    const userPermissions = await this.usersPermissionRepository.find({
+      where: {user_id: user.id},
+      relations: ['permission']
+    })
+    user.userPermission = userPermissions
     return user
   }
 

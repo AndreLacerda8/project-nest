@@ -49,9 +49,14 @@ type AuthType {
   token: String!
 }
 
+type AllGamesType {
+  minCartValue: Float!
+  allGames: [Game!]!
+}
+
 type Query {
-  user(id: String!): User!
-  games: [Game!]!
+  user(userId: String!): User!
+  games: AllGamesType!
   game(id: Float!): Game!
   bets(userId: String!): [Bet!]!
   bet(betId: Float!): Bet!
@@ -59,8 +64,8 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): AuthType!
-  updateUser(data: UpdateUserInput!, id: String!): User!
-  removeUser(id: String!): Boolean!
+  updateUser(data: UpdateUserInput!, userId: String!): User!
+  removeUser(userId: String!): Boolean!
   login(data: AuthInput!): AuthType!
   createGame(game: CreateGameInput!): Game!
   updateGame(game: UpdateGameInput!, id: Float!): Game!
